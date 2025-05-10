@@ -127,18 +127,6 @@ input("已完成")
   详见 [ARCAEA中文维基](https://wiki.arcaea.cn/) 中对谱面格式的介绍  
   多个字典以列表形式存储
 
-- Scenecontrol列表：
-  存储铺面Scenecontrol事件信息，如：
-  ```json
-  "time": 0,
-  "type": "arcahvdistort",
-  "param": [
-    1.25,
-    0
-  ]
-  ```
-  其中``"param"``项在没有参数时不会生成，详见 [ARCAEA中文维基](https://wiki.arcaea.cn/) 中对谱面格式的介绍  
-  多个字典以列表形式存储
 - TimingList列表：
   存储无timinggroup与timinggroup组的事件  
   在该列表中无timinggroup的下标为0，timinggroup组的下标≥1（如果铺面中无timinggroup组，则该列表中只有下标为零的字典）  
@@ -146,7 +134,7 @@ input("已完成")
   当在该列表中下标为0的字典中（即无timinggroup的事件），``"tags"``中无参数。
   - tags
     在aff文件``timinggroup(){};``中小括号中的标识，一般用于对timinggroup中的事件达成特殊效果（如noinput）  
-    字典格式如：
+    列表格式如：
       ```json
       "noinput",
       "anglex200"
@@ -202,8 +190,8 @@ input("已完成")
     ```
     列表中存储着该arc上所有arctap的时间，其范围在startTime与endTime之间  
     
-  - timing
-    控制铺面的bpm（流速）与beat（小节线）
+  - timing  
+    控制铺面的bpm（流速）与beat（小节线）  
     其格式如：
     ```json
     "time": 0,
@@ -211,7 +199,19 @@ input("已完成")
     "metreInfo": 4.0
     ```
     其中``"metreInfo"``是指表示每多少个四分拍为一小节，并出现一条小节线  
-    多个字典以列表形式存储  
+    多个字典以列表形式存储
+  - scenecontrol  
+    存储铺面Scenecontrol事件信息，如：
+    ```json
+    "time": 0,
+    "type": "arcahvdistort",
+    "param": [
+      1.25,
+      0
+    ]
+    ```
+    其中``"param"``项在没有参数时不会生成，详见 [ARCAEA中文维基](https://wiki.arcaea.cn/) 中对谱面格式的介绍  
+    多个字典以列表形式存储
     
   对以上任何信息如有困惑，详见 [ARCAEA中文维基](https://wiki.arcaea.cn/) 中对谱面格式的介绍。  
 
