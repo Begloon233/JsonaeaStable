@@ -174,7 +174,6 @@ def output(arcJson:dict,arcPath:str):
             for d in i:
                 old_dict0.append(d)
         new_dict0 = Tools.sort(old_dict0)
-        createJson(new_dict0,"testJJ.json")
 
         #处理无timinggroup
         for de in new_dict0:    #de:DictEvent
