@@ -85,7 +85,7 @@ input("已完成")
 - 谱面前元信息（如offset）
 
 特别地，**Jsonaea**目前**不支持**的谱面信息如下：
-- 含float轨道参数的tap
+- 含float轨道参数的tap与hold
 - 所有flick语句
 - 所有谱面注释
 - switch版Arcaea的note染色
