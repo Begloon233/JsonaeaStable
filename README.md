@@ -7,6 +7,7 @@
 **Jsonaea**为可将Arcaea游戏中铺面文件（``x.aff``）转换为json文件 / 字典，亦可将json文件 / 字典转换回铺面文件的实用库。  
 此库使用``Python``编写。  
 此库还有一个``Tools``附加库，内含多种不必要但减少代码量的实用函数。  
+有关库函数的详细说明等请前往此页面：[Wiki界面](https://github.com/Begloon233/JsonaeaStable/wiki)
   
 ## 快速使用
 打开命令栏，输入以下指令以安装Jsonaea  
