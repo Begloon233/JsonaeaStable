@@ -95,12 +95,12 @@ input("已完成")
 {
   "META":{},
   "Camera":[],
-  "Scenecontrol":[],
   "TimingList":[
     {
       "tags":[],
       "notes":[],
       "timing":[],
+      "scenecontrol":[]
     }
   ]
 }
