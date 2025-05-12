@@ -47,7 +47,7 @@ output(arcJson,arcPath)
 ``arcPath``: Arcaea铺面文件导出路径  
 此函数不返回值，会创建一个``.aff``文件。
 ### 示例
-jsonaea库使用的具体示例，以下代码可将铺面中的arc全部转化为蛇：  
+jsonaea库使用的具体示例，以下代码可将谱面中的arc全部转化为蛇（带arctap的除外）：  
 ```python
 import tkinter as tk
 from tkinter import filedialog
