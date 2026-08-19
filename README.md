@@ -29,14 +29,14 @@ import jsonaea
 load(arcPath)
 ```
 ``arcPath``: Arcaea铺面文件导入路径  
-此函数将返回一个字典。
+此函数将返回一个存储谱面的字典。
 
 使用createJson函数生成json文件:
 ```python
 createJson(dict,JsonPath)
 ```
-`dict`:创建json文件的字典  
-`JsonPath`:创建json文件的路径
+`dict`:创建json文件的谱面字典  
+`JsonPath`:创建json文件的路径  
 此函数不返回值，会创建一个json文件。  
 
 导出生成的json文件 / 字典为``.aff``文件：
