@@ -83,9 +83,9 @@ input("已完成")
 - 所有scenecontrol语句
 - 不同时间组以及标记（如noinput）
 - 谱面前元信息（如offset）
+- 含float轨道参数的tap与hold
 
 特别地，**Jsonaea**目前**不支持**的谱面信息如下：
-- 含float轨道参数的tap与hold
 - 所有flick语句
 - 所有谱面注释
 - switch版Arcaea的note染色
