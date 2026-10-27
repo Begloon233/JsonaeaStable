@@ -1,5 +1,5 @@
 '''
-Jsonaea by Begloon (2025)\n
+Jsonaea by Begloon (2026)\n
 这是一个可以将Arcaea游戏中谱面文件（*.aff）转换为json类字典，亦可将json类字典转换回谱面文件的实用库。\n
 内置了Tools实用库
 
@@ -15,7 +15,7 @@ Jsonaea by Begloon (2025)\n
 import re
 from json import dumps
 from . import Tools
-__script__ = 250509
+__script__ = 260819
 
 #纠正对照字典
 ArcColor = {
@@ -32,8 +32,22 @@ Boolean = {
     "true":True,
     "false":False,
     True:"true",
-    False:"false"
+    False:"false",
+    "designant":"designant"
 }
+
+def is_float(value):
+    try:
+        int(value)
+        return False
+    except ValueError:
+        pass
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+    
 
 #解读arcaea文件（load函数）
 def load(arcPath:str) -> dict:
@@ -66,12 +80,15 @@ def load(arcPath:str) -> dict:
             if nl[0] == "-":
                 break
             else:
-                ArcJson["META"].update({nl[0]:int(nl[1])})
+                try:
+                    ArcJson["META"].update({nl[0]:int(nl[1])})
+                except ValueError:
+                    ArcJson["META"].update({nl[0]:float(nl[1])})
         for lineI,line in enumerate(data):
             if lineI <= noteNum - 1:
                 continue
             line = line.strip()
-            nl = re.split('\(|\)|,|;|:',line)  #nl:NoteList
+            nl = re.split('\(|\)|,|;|:',line)  # type: ignore #nl:NoteList
             fac = nl[0]
             if fac == "timinggroup":
                 tg += 1
@@ -118,17 +135,19 @@ def load(arcPath:str) -> dict:
                     "metreInfo":float(nl[3])
                 })
             if fac == "":
+                t = float(nl[2]) if is_float(nl[2]) else int(nl[2])
                 ArcJson["TimingList"][tg]["notes"].append({
                     "type":"tap",
                     "time":int(nl[1]),
-                    "track":int(nl[2])
+                    "track":t
                 })
             if fac == "hold":
+                t = float(nl[3]) if is_float(nl[3]) else int(nl[3])
                 ArcJson["TimingList"][tg]["notes"].append({
                     "type":"hold",
                     "startTime":int(nl[1]),
                     "endTime":int(nl[2]),
-                    "track":int(nl[3])
+                    "track":t
                 })
             if fac == "arc":
                 ArcJson["TimingList"][tg]["notes"].append({
@@ -140,16 +159,20 @@ def load(arcPath:str) -> dict:
                     "arcType":nl[5],
                     "color":ArcColor[int(nl[8])],
                     "hitsound":nl[9],
-                    "IsSkyline":Boolean[nl[10]]
+                    "IsSkyline":Boolean[nl[10]],
                 })
-                if nl[11] == "[arctap":
-                    noteNum = len(ArcJson["TimingList"][tg]["notes"])-1
-                    i = 11
+                arctap_i = 11
+                noteNum = len(ArcJson["TimingList"][tg]["notes"])-1
+                if is_float(nl[11]):
+                    print("Found render density")
+                    ArcJson["TimingList"][tg]["notes"][noteNum].update({"renderDesity":float(nl[11])})
+                    arctap_i = 12
+                if nl[arctap_i] == "[arctap":
                     ArcJson["TimingList"][tg]["notes"][noteNum].update({"arctap":[]})
                     while True:
-                        ArcJson["TimingList"][tg]["notes"][noteNum]["arctap"].append(int(nl[i+1]))
-                        if nl[i+3] == "arctap":
-                            i += 3
+                        ArcJson["TimingList"][tg]["notes"][noteNum]["arctap"].append(int(nl[arctap_i+1]))
+                        if nl[arctap_i+3] == "arctap":
+                            arctap_i += 3
                         else:
                             break
     return ArcJson
@@ -192,8 +215,12 @@ def output(arcJson:dict,arcPath:str):
             elif de["type"] == "hold":
                 f.write("hold(%d,%d,%r);\n"%(de["startTime"],de["endTime"],de["track"]))
             elif de["type"] == "arc":
-                f.write("arc(%d,%d,%.2f,%.2f,%s,%.2f,%.2f,%d,%s,%s)"%(de["startTime"],de["endTime"],de["startPos"][0],de["endPos"][0],de["arcType"],
-                de["startPos"][1],de["endPos"][1],ArcColor[de["color"]],de["hitsound"],Boolean[de["IsSkyline"]]))
+                if "renderDesity" in de:
+                    f.write("   arc(%d,%d,%f,%f,%s,%f,%f,%d,%s,%s,%f)"%(de["startTime"],de["endTime"],de["startPos"][0],de["endPos"][0],de["arcType"],
+                            de["startPos"][1],de["endPos"][1],ArcColor[de["color"]],de["hitsound"],Boolean[de["IsSkyline"]],de["renderDesity"]))
+                else:
+                    f.write("   arc(%d,%d,%f,%f,%s,%f,%f,%d,%s,%s)"%(de["startTime"],de["endTime"],de["startPos"][0],de["endPos"][0],de["arcType"],
+                            de["startPos"][1],de["endPos"][1],ArcColor[de["color"]],de["hitsound"],Boolean[de["IsSkyline"]]))
                 if "arctap" in de and not de["arctap"] == []:
                     f.write("[")
                     for index,i in enumerate(de["arctap"]):
@@ -221,7 +248,7 @@ def output(arcJson:dict,arcPath:str):
             new_dict = Tools.sort(old_dict)
             for de in new_dict:
                 if "BPM" in de:
-                    f.write("   timing(%r,%.2f,%.2f);\n"%(de["time"],float(de["BPM"]),de["metreInfo"]))
+                    f.write("   timing(%r,%.2f,%f);\n"%(de["time"],float(de["BPM"]),de["metreInfo"]))
                 elif len(de.keys()) == 2:
                     f.write("   scenecontrol(%r,%s);\n"%(de["time"],de["type"]))
                 elif "param" in de:
@@ -231,8 +258,12 @@ def output(arcJson:dict,arcPath:str):
                 elif de["type"] == "hold":
                     f.write("   hold(%d,%d,%r);\n"%(de["startTime"],de["endTime"],de["track"]))
                 elif de["type"] == "arc":
-                    f.write("   arc(%d,%d,%.2f,%.2f,%s,%.2f,%.2f,%d,%s,%s)"%(de["startTime"],de["endTime"],de["startPos"][0],de["endPos"][0],de["arcType"],
-                    de["startPos"][1],de["endPos"][1],ArcColor[de["color"]],de["hitsound"],Boolean[de["IsSkyline"]]))
+                    if "renderDesity" in de:
+                        f.write("   arc(%d,%d,%f,%f,%s,%f,%f,%d,%s,%s,%f)"%(de["startTime"],de["endTime"],de["startPos"][0],de["endPos"][0],de["arcType"],
+                                de["startPos"][1],de["endPos"][1],ArcColor[de["color"]],de["hitsound"],Boolean[de["IsSkyline"]],de["renderDesity"]))
+                    else:
+                        f.write("   arc(%d,%d,%f,%f,%s,%f,%f,%d,%s,%s)"%(de["startTime"],de["endTime"],de["startPos"][0],de["endPos"][0],de["arcType"],
+                                de["startPos"][1],de["endPos"][1],ArcColor[de["color"]],de["hitsound"],Boolean[de["IsSkyline"]]))
                     if "arctap" in de:
                         f.write("[")
                         for index,i in enumerate(de["arctap"]):
