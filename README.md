@@ -84,6 +84,7 @@ input("已完成")
 - 不同时间组以及标记（如noinput）
 - 谱面前元信息（如offset）
 - 含float轨道参数的tap与hold
+- arc的渲染密度renderDesity支持
 
 特别地，**Jsonaea**目前**不支持**的谱面信息如下：
 - 所有flick语句
@@ -175,12 +176,14 @@ input("已完成")
     "arcType": "si",
     "color": "blue",
     "hitsound": "none",
-    "IsSkyline": true
+    "IsSkyline": true,
+    "renderDesity": 3.0
     ```
     其中``"startPos"``与``"endPos"``列表中下标为0的参数时坐标x,下标为1的为坐标y  
     ``"arcType"``是指该arc的滑动方式  
     ``"hitsound"``为该arc上arctap的打击音，如果有填以铺面的相对路径，如果没有填none  
-    ``"IsSkyline"``为该arc是否为黑线，反之为蛇  
+    ``"IsSkyline"``为该arc是否为黑线，反之为蛇
+    ``"renderDesity"``\(可选参数\) 为该arc的渲染精度，值越大蛇越平滑  
     如果该arc上有arctap，那么将在下方添加键值对，如：  
     ```json
     "arctap": [
@@ -216,6 +219,6 @@ input("已完成")
   对以上任何信息如有困惑，详见 [ARCAEA中文维基](https://wiki.arcaea.cn/) 中对谱面格式的介绍。  
 
 # 特别声明
-**本项目只对Arcaea铺面文件进行解读，关于Arcaea铺面使用与更改的最终解释权归Arcaea版权方lowiro所有。**  
+**本项目只对 \*.aff 铺面文件进行解读，关于Arcaea铺面使用与更改的最终解释权归Arcaea版权方lowiro所有。**  
 **任何通过通过本项目对游戏内铺面的改写与本项目无关，一切责任归使用者所有。**  
 **本项目版权归程序编写者Begloon(321bug)所有。**
