@@ -182,7 +182,7 @@ input("已完成")
     其中``"startPos"``与``"endPos"``列表中下标为0的参数时坐标x,下标为1的为坐标y  
     ``"arcType"``是指该arc的滑动方式  
     ``"hitsound"``为该arc上arctap的打击音，如果有填以铺面的相对路径，如果没有填none  
-    ``"IsSkyline"``为该arc是否为黑线，反之为蛇
+    ``"IsSkyline"``为该arc是否为黑线，反之为蛇  
     ``"renderDesity"``\(可选参数\) 为该arc的渲染精度，值越大蛇越平滑  
     如果该arc上有arctap，那么将在下方添加键值对，如：  
     ```json
